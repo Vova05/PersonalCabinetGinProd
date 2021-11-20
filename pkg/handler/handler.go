@@ -16,19 +16,19 @@ func NewHandler(services *service.Service) *Handler{
 func (h *Handler) InitRoutes() *gin.Engine{
 	router := gin.New()
 
-	router.Static("/css","C:\\Users\\VovaGlh\\GolandProjects\\PersonalCabinetGin\\pkg\\handler\\templates\\css")
-	router.Static("/fonts","C:\\Users\\VovaGlh\\GolandProjects\\PersonalCabinetGin\\pkg\\handler\\templates/css/fonts")
-	router.Static("/images","C:\\Users\\VovaGlh\\GolandProjects\\PersonalCabinetGin\\pkg\\handler\\templates/images")
-	router.Static("/js","C:\\Users\\VovaGlh\\GolandProjects\\PersonalCabinetGin\\pkg\\handler\\templates/js")
+	router.Static("/css","C:\\Users\\VovaGlh\\GolandProjects\\PersonalCabinetGin1\\pkg\\handler\\templates\\css")
+	router.Static("/fonts","C:\\Users\\VovaGlh\\GolandProjects\\PersonalCabinetGin1\\pkg\\handler\\templates/css/fonts")
+	router.Static("/images","C:\\Users\\VovaGlh\\GolandProjects\\PersonalCabinetGin1\\pkg\\handler\\templates/images")
+	router.Static("/js","C:\\Users\\VovaGlh\\GolandProjects\\PersonalCabinetGin1\\pkg\\handler\\templates/js")
 
-	router.LoadHTMLGlob("C:\\Users\\VovaGlh\\GolandProjects\\PersonalCabinetGin\\pkg\\handler\\templates/*.html")
+	router.LoadHTMLGlob("C:\\Users\\VovaGlh\\GolandProjects\\PersonalCabinetGin1\\pkg\\handler\\templates/*.html")
 
 	auth := router.Group("/auth")
 	{
-		auth.Static("/css","C:\\Users\\VovaGlh\\GolandProjects\\PersonalCabinetGin\\pkg\\handler\\templates\\css")
-		auth.Static("/fonts","C:\\Users\\VovaGlh\\GolandProjects\\PersonalCabinetGin\\pkg\\handler\\templates/assets/css/fonts")
-		auth.Static("/images","C:\\Users\\VovaGlh\\GolandProjects\\PersonalCabinetGin\\pkg\\handler\\templates/assets/images")
-		auth.Static("/js","C:\\Users\\VovaGlh\\GolandProjects\\PersonalCabinetGin\\pkg\\handler\\templates/js")
+		auth.Static("/css","C:\\Users\\VovaGlh\\GolandProjects\\PersonalCabinetGin1\\pkg\\handler\\templates\\css")
+		auth.Static("/fonts","C:\\Users\\VovaGlh\\GolandProjects\\PersonalCabinetGin1\\pkg\\handler\\templates/assets/css/fonts")
+		auth.Static("/images","C:\\Users\\VovaGlh\\GolandProjects\\PersonalCabinetGin1\\pkg\\handler\\templates/assets/images")
+		auth.Static("/js","C:\\Users\\VovaGlh\\GolandProjects\\PersonalCabinetGin1\\pkg\\handler\\templates/js")
 
 		auth.POST("/sign-up", h.signUp)
 
