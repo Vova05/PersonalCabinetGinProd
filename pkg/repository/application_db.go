@@ -21,7 +21,7 @@ func (r *ApplicationDB) Create(userId int, application models.Application)(int, 
 	if err := row.Scan(&application).Error; err != nil {
 		return 0,err
 	}
-	id = application.Id
+	id = application.IdApplication
 	return id, nil
 }
 
@@ -33,16 +33,41 @@ func (r *ApplicationDB) GetAll(userId int)([]models.Application, error){
 
 func (r *ApplicationDB) GetById(userId, applicationId int)(models.Application, error){
 	var application models.Application
-	err := r.db.Table("applications").Where("creator_id = ? AND id = ?",userId,applicationId).Scan(&application).Error
+	err := r.db.Table("applications").Where("creator_id = ? AND id_application = ?",userId,applicationId).Scan(&application).Error
 	return application, err
 }
 func (r *ApplicationDB) Delete(userId, applicationId int)( error){
 	var app models.Application
-	err := r.db.Where("creator_id = ? AND id = ?",userId,applicationId).First(&app).Error
+	err := r.db.Where("creator_id = ? AND id_application = ?",userId,applicationId).First(&app).Error
 	if err == nil {
-		err = r.db.Table("applications").Where("creator_id = ? AND id = ?",userId,applicationId).Delete(app).Error
+		err = r.db.Table("applications").Where("creator_id = ? AND id_application = ?",userId,applicationId).Delete(app).Error
 	}else{
 		return err
 	}
+	return err
+}
+
+func (r *ApplicationDB) Update(userId,id int ,input models.UpdateApplication)( error){
+	//setValues := make([]string, 0)
+	//args := make([]interface{}, 0)
+	//argId := 1
+
+	//if input.Title != nil{
+	//	setValues = append(setValues,fmt.Sprintf("title=$%d",argId))
+	//	args = append(args,*input.Title)
+	//	argId++
+	//}
+	//if input.Message != nil{
+	//	setValues = append(setValues,fmt.Sprintf("title=$%d",argId))
+	//	args = append(args,*input.Message)
+	//	argId++
+	//}
+
+	//setQuery := strings.Join(setValues,", ")
+	var app models.Application
+	err := r.db.Model(app).Where("creator_id = ? AND id_application = ?", userId, id).Updates(models.UpdateApplication{
+		Title: input.Title,
+		Message: input.Message,
+	}).Error
 	return err
 }

@@ -7,61 +7,45 @@ import (
 	"strconv"
 )
 
-func (h *Handler) createApplication(c *gin.Context){
-	userId, err := getUserId(c)
+func (h *Handler) createStatus(c *gin.Context){
 
-	if err != nil{
-		return
-	}
-	var input models.Application
+	var input models.Status
 	if err := c.BindJSON(&input); err != nil{
 		newErrorResponse(c,http.StatusBadRequest,err.Error())
 		return
 	}
 
-	id, err := h.service.Application.Create(userId,input)
+	id,err := h.service.Status.Create(input)
 
 	if err != nil {
 		newErrorResponse(c,http.StatusInternalServerError,err.Error())
 		return
 	}
-
 
 	c.JSON(http.StatusOK,map[string]interface{}{
 		"id": id,
 	})
 }
 
-type getAllApplications struct {
-	Data []models.Application `json:"data"`
+type getAllStatus struct {
+	Data []models.Status `json:"data"`
 }
 
-func (h *Handler)  getAllApplication(c *gin.Context){
 
-	userId, err := getUserId(c)
+func (h *Handler)  getAllStatus(c *gin.Context){
 
-	if err != nil{
-		return
-	}
-
-	applications, err := h.service.Application.GetAll(userId)
+	status, err := h.service.Status.GetAll()
 	if err != nil {
 		newErrorResponse(c,http.StatusInternalServerError,err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK,getAllApplications{
-		Data: applications,
+	c.JSON(http.StatusOK,getAllStatus{
+		Data: status,
 	})
 }
 
-func (h *Handler) getApplicationById(c *gin.Context){
-
-	userId, err := getUserId(c)
-
-	if err != nil{
-		return
-	}
+func (h *Handler) getStatusById(c *gin.Context){
 
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
@@ -69,7 +53,7 @@ func (h *Handler) getApplicationById(c *gin.Context){
 		return
 	}
 
-	application, err := h.service.Application.GetById(userId, id)
+	application, err := h.service.Status.GetById(id)
 	if err != nil {
 		newErrorResponse(c,http.StatusInternalServerError,err.Error())
 		return
@@ -78,12 +62,8 @@ func (h *Handler) getApplicationById(c *gin.Context){
 	c.JSON(http.StatusOK,application)
 }
 
-func (h *Handler) updateApplication(c *gin.Context){
-	userId, err := getUserId(c)
+func (h *Handler) updateStatus(c *gin.Context){
 
-	if err != nil{
-		return
-	}
 
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
@@ -91,26 +71,20 @@ func (h *Handler) updateApplication(c *gin.Context){
 		return
 	}
 
-	var input models.UpdateApplication
+	var input models.UpdateStatus
 	if err := c.BindJSON(&input); err != nil{
 		newErrorResponse(c,http.StatusBadRequest, err.Error())
 		return
 	}
 
-	h.service.Application.Update(userId,id,input)
+	h.service.Status.Update(id,input)
 
 	c.JSON(http.StatusOK, statusResponse{
 		Status: "Updated",
 	})
 }
 
-func (h *Handler) deleteApplication(c *gin.Context) {
-
-	userId, err := getUserId(c)
-
-	if err != nil{
-		return
-	}
+func (h *Handler) deleteStatus(c *gin.Context) {
 
 	id, err := strconv.Atoi(c.Param("id"))
 
@@ -119,7 +93,7 @@ func (h *Handler) deleteApplication(c *gin.Context) {
 		return
 	}
 
-	err = h.service.Application.Delete(userId, id)
+	err = h.service.Status.Delete( id)
 	if err != nil {
 		newErrorResponse(c,http.StatusInternalServerError,err.Error())
 		return

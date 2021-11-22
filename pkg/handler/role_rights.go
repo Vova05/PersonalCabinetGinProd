@@ -7,36 +7,31 @@ import (
 	"strconv"
 )
 
-func (h *Handler) createApplication(c *gin.Context){
-	userId, err := getUserId(c)
+func (h *Handler) createRoleRights(c *gin.Context){
 
-	if err != nil{
-		return
-	}
-	var input models.Application
+	var input models.RoleRight
 	if err := c.BindJSON(&input); err != nil{
 		newErrorResponse(c,http.StatusBadRequest,err.Error())
 		return
 	}
 
-	id, err := h.service.Application.Create(userId,input)
+	id,err := h.service.RoleRights.Create(input)
 
 	if err != nil {
 		newErrorResponse(c,http.StatusInternalServerError,err.Error())
 		return
 	}
-
 
 	c.JSON(http.StatusOK,map[string]interface{}{
 		"id": id,
 	})
 }
 
-type getAllApplications struct {
-	Data []models.Application `json:"data"`
+type getAllRoleRights struct {
+	Data []models.RoleRight `json:"data"`
 }
 
-func (h *Handler)  getAllApplication(c *gin.Context){
+func (h *Handler)  getAllRoleRightsRole(c *gin.Context){
 
 	userId, err := getUserId(c)
 
@@ -44,24 +39,32 @@ func (h *Handler)  getAllApplication(c *gin.Context){
 		return
 	}
 
-	applications, err := h.service.Application.GetAll(userId)
+	role, err := h.service.Role.GetAllUser(userId)
+	roles, err := h.service.RoleRights.GetAllRole(role[0].IdRole)
 	if err != nil {
 		newErrorResponse(c,http.StatusInternalServerError,err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK,getAllApplications{
-		Data: applications,
+	c.JSON(http.StatusOK,getAllRoleRights{
+		Data: roles,
 	})
 }
 
-func (h *Handler) getApplicationById(c *gin.Context){
+func (h *Handler)  getAllRoleRights(c *gin.Context){
 
-	userId, err := getUserId(c)
-
-	if err != nil{
+	roles, err := h.service.RoleRights.GetAll()
+	if err != nil {
+		newErrorResponse(c,http.StatusInternalServerError,err.Error())
 		return
 	}
+
+	c.JSON(http.StatusOK,getAllRoleRights{
+		Data: roles,
+	})
+}
+
+func (h *Handler) getRoleRightsById(c *gin.Context){
 
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
@@ -69,7 +72,7 @@ func (h *Handler) getApplicationById(c *gin.Context){
 		return
 	}
 
-	application, err := h.service.Application.GetById(userId, id)
+	application, err := h.service.RoleRights.GetById(id)
 	if err != nil {
 		newErrorResponse(c,http.StatusInternalServerError,err.Error())
 		return
@@ -78,12 +81,8 @@ func (h *Handler) getApplicationById(c *gin.Context){
 	c.JSON(http.StatusOK,application)
 }
 
-func (h *Handler) updateApplication(c *gin.Context){
-	userId, err := getUserId(c)
+func (h *Handler) updateRoleRights(c *gin.Context){
 
-	if err != nil{
-		return
-	}
 
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
@@ -91,26 +90,20 @@ func (h *Handler) updateApplication(c *gin.Context){
 		return
 	}
 
-	var input models.UpdateApplication
+	var input models.UpdateRoleRight
 	if err := c.BindJSON(&input); err != nil{
 		newErrorResponse(c,http.StatusBadRequest, err.Error())
 		return
 	}
 
-	h.service.Application.Update(userId,id,input)
+	h.service.RoleRights.Update(id,input)
 
 	c.JSON(http.StatusOK, statusResponse{
 		Status: "Updated",
 	})
 }
 
-func (h *Handler) deleteApplication(c *gin.Context) {
-
-	userId, err := getUserId(c)
-
-	if err != nil{
-		return
-	}
+func (h *Handler) deleteRoleRights(c *gin.Context) {
 
 	id, err := strconv.Atoi(c.Param("id"))
 
@@ -119,7 +112,7 @@ func (h *Handler) deleteApplication(c *gin.Context) {
 		return
 	}
 
-	err = h.service.Application.Delete(userId, id)
+	err = h.service.RoleRights.Delete( id)
 	if err != nil {
 		newErrorResponse(c,http.StatusInternalServerError,err.Error())
 		return

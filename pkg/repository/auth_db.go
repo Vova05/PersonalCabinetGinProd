@@ -20,7 +20,7 @@ func (r *AuthDB) CreateUser(user models.User)(int,error){
 	if err := row.Scan(&user).Error; err != nil {
 		return 0,err
 	}
-	id = user.Id
+	id = user.IdUser
 	return id, nil
 }
 

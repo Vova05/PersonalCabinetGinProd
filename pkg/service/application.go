@@ -28,3 +28,7 @@ func (s *ApplicationService) GetById(userId, applicationId int)(models.Applicati
 func (s *ApplicationService) Delete(userId, applicationId int)( error){
 	return s.repo.Delete(userId,applicationId)
 }
+
+func (s *ApplicationService) Update(userId,id int ,input models.UpdateApplication)( error){
+	return s.repo.Update(userId,id, input)
+}

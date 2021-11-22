@@ -3,65 +3,50 @@ package handler
 import (
 	"PersonalCabinetGin/models"
 	"github.com/gin-gonic/gin"
+	"log"
 	"net/http"
 	"strconv"
 )
 
-func (h *Handler) createApplication(c *gin.Context){
-	userId, err := getUserId(c)
+func (h *Handler) createRights(c *gin.Context){
 
-	if err != nil{
-		return
-	}
-	var input models.Application
+	var input models.Right
 	if err := c.BindJSON(&input); err != nil{
 		newErrorResponse(c,http.StatusBadRequest,err.Error())
 		return
 	}
 
-	id, err := h.service.Application.Create(userId,input)
+	id,err := h.service.Rights.Create(input)
 
 	if err != nil {
 		newErrorResponse(c,http.StatusInternalServerError,err.Error())
 		return
 	}
-
 
 	c.JSON(http.StatusOK,map[string]interface{}{
 		"id": id,
 	})
 }
 
-type getAllApplications struct {
-	Data []models.Application `json:"data"`
+type getAllRights struct {
+	Data []models.Right `json:"data"`
 }
 
-func (h *Handler)  getAllApplication(c *gin.Context){
 
-	userId, err := getUserId(c)
+func (h *Handler)  getAllRights(c *gin.Context){
 
-	if err != nil{
-		return
-	}
-
-	applications, err := h.service.Application.GetAll(userId)
+	rights, err := h.service.Rights.GetAll()
 	if err != nil {
 		newErrorResponse(c,http.StatusInternalServerError,err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK,getAllApplications{
-		Data: applications,
+	c.JSON(http.StatusOK,getAllRights{
+		Data: rights,
 	})
 }
 
-func (h *Handler) getApplicationById(c *gin.Context){
-
-	userId, err := getUserId(c)
-
-	if err != nil{
-		return
-	}
+func (h *Handler) getRightsById(c *gin.Context){
 
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
@@ -69,21 +54,17 @@ func (h *Handler) getApplicationById(c *gin.Context){
 		return
 	}
 
-	application, err := h.service.Application.GetById(userId, id)
+	right, err := h.service.Rights.GetById(id)
 	if err != nil {
 		newErrorResponse(c,http.StatusInternalServerError,err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK,application)
+	c.JSON(http.StatusOK,right)
 }
 
-func (h *Handler) updateApplication(c *gin.Context){
-	userId, err := getUserId(c)
+func (h *Handler) updateRights(c *gin.Context){
 
-	if err != nil{
-		return
-	}
 
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
@@ -91,26 +72,23 @@ func (h *Handler) updateApplication(c *gin.Context){
 		return
 	}
 
-	var input models.UpdateApplication
+	var input models.UpdateRight
 	if err := c.BindJSON(&input); err != nil{
 		newErrorResponse(c,http.StatusBadRequest, err.Error())
 		return
 	}
 
-	h.service.Application.Update(userId,id,input)
+	err = h.service.Rights.Update(id,input)
 
+	if err != nil{
+		log.Println(err)
+	}
 	c.JSON(http.StatusOK, statusResponse{
 		Status: "Updated",
 	})
 }
 
-func (h *Handler) deleteApplication(c *gin.Context) {
-
-	userId, err := getUserId(c)
-
-	if err != nil{
-		return
-	}
+func (h *Handler) deleteRights(c *gin.Context) {
 
 	id, err := strconv.Atoi(c.Param("id"))
 
@@ -119,7 +97,7 @@ func (h *Handler) deleteApplication(c *gin.Context) {
 		return
 	}
 
-	err = h.service.Application.Delete(userId, id)
+	err = h.service.Rights.Delete( id)
 	if err != nil {
 		newErrorResponse(c,http.StatusInternalServerError,err.Error())
 		return
