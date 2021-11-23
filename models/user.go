@@ -6,6 +6,7 @@ type User struct {
 	Username string `json:"username" binding: "required"`
 	Password string `json:"password" binding: "required"`
 	RoleUserId int `json:"role_user_id"`
+	BankUser int `json:"bank_user"`
 }
 
 type UpdateUser struct {
@@ -13,4 +14,5 @@ type UpdateUser struct {
 	Username string
 	Password string
 	RoleUserId int
+	BankUser int
 }

@@ -7,15 +7,15 @@ import (
 	"strconv"
 )
 
-func (h *Handler) createScores(c *gin.Context){
+func (h *Handler) createCard(c *gin.Context){
 
-	var input models.Scores
+	var input models.Card
 	if err := c.BindJSON(&input); err != nil{
 		newErrorResponse(c,http.StatusBadRequest,err.Error())
 		return
 	}
 
-	id,err := h.service.Scores.Create(input)
+	id,err := h.service.Card.Create(input)
 
 	if err != nil {
 		newErrorResponse(c,http.StatusInternalServerError,err.Error())
@@ -27,11 +27,11 @@ func (h *Handler) createScores(c *gin.Context){
 	})
 }
 
-type getAllScores struct {
-	Data []models.Scores `json:"data"`
+type getAllCard struct {
+	Data []models.Card `json:"data"`
 }
 
-func (h *Handler)  getAllScoresUser(c *gin.Context){
+func (h *Handler)  getAllCardUser(c *gin.Context){
 
 	userId, err := getUserId(c)
 
@@ -39,32 +39,32 @@ func (h *Handler)  getAllScoresUser(c *gin.Context){
 		return
 	}
 
-	account, err := h.service.BankAccounts.GetAllUser(userId)//список
-	scores, err := h.service.Scores.GetAllAccount(account[0].IdBankAccount)//список
+	account, err := h.service.BankAccounts.GetAllUser(userId)
+	cards, err := h.service.Card.GetAllAccount(account[0].IdBankAccount)
 	if err != nil {
 		newErrorResponse(c,http.StatusInternalServerError,err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK,getAllScores{
-		Data: scores,
+	c.JSON(http.StatusOK,getAllCard{
+		Data: cards,
 	})
 }
 
-func (h *Handler)  getAllScores(c *gin.Context){
+func (h *Handler)  getAllCard(c *gin.Context){
 
-	scores, err := h.service.Scores.GetAll()
+	cards, err := h.service.Card.GetAll()
 	if err != nil {
 		newErrorResponse(c,http.StatusInternalServerError,err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK,getAllScores{
-		Data: scores,
+	c.JSON(http.StatusOK,getAllCard{
+		Data: cards,
 	})
 }
 
-func (h *Handler) getScoresById(c *gin.Context){
+func (h *Handler) getCardById(c *gin.Context){
 
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
@@ -72,7 +72,7 @@ func (h *Handler) getScoresById(c *gin.Context){
 		return
 	}
 
-	account, err := h.service.Scores.GetById(id)
+	account, err := h.service.Card.GetById(id)
 	if err != nil {
 		newErrorResponse(c,http.StatusInternalServerError,err.Error())
 		return
@@ -81,7 +81,7 @@ func (h *Handler) getScoresById(c *gin.Context){
 	c.JSON(http.StatusOK,account)
 }
 
-func (h *Handler) updateScores(c *gin.Context){
+func (h *Handler) updateCard(c *gin.Context){
 
 
 	id, err := strconv.Atoi(c.Param("id"))
@@ -90,13 +90,13 @@ func (h *Handler) updateScores(c *gin.Context){
 		return
 	}
 
-	var input models.UpdateScores
+	var input models.UpdateCard
 	if err := c.BindJSON(&input); err != nil{
 		newErrorResponse(c,http.StatusBadRequest, err.Error())
 		return
 	}
 
-	h.service.Scores.Update(id,input)
+	h.service.Card.Update(id,input)
 
 	c.JSON(http.StatusOK, statusResponse{
 		Status: "Updated",

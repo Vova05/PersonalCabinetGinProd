@@ -7,15 +7,15 @@ import (
 	"strconv"
 )
 
-func (h *Handler) createScores(c *gin.Context){
+func (h *Handler) createUser(c *gin.Context){
 
-	var input models.Scores
+	var input models.User
 	if err := c.BindJSON(&input); err != nil{
 		newErrorResponse(c,http.StatusBadRequest,err.Error())
 		return
 	}
 
-	id,err := h.service.Scores.Create(input)
+	id,err := h.service.User.Create(input)
 
 	if err != nil {
 		newErrorResponse(c,http.StatusInternalServerError,err.Error())
@@ -27,44 +27,25 @@ func (h *Handler) createScores(c *gin.Context){
 	})
 }
 
-type getAllScores struct {
-	Data []models.Scores `json:"data"`
+type getAllUser struct {
+	Data []models.User `json:"data"`
 }
 
-func (h *Handler)  getAllScoresUser(c *gin.Context){
 
-	userId, err := getUserId(c)
+func (h *Handler)  getAllUser(c *gin.Context){
 
-	if err != nil{
-		return
-	}
-
-	account, err := h.service.BankAccounts.GetAllUser(userId)//список
-	scores, err := h.service.Scores.GetAllAccount(account[0].IdBankAccount)//список
+	users, err := h.service.User.GetAll()
 	if err != nil {
 		newErrorResponse(c,http.StatusInternalServerError,err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK,getAllScores{
-		Data: scores,
+	c.JSON(http.StatusOK,getAllUser{
+		Data: users,
 	})
 }
 
-func (h *Handler)  getAllScores(c *gin.Context){
-
-	scores, err := h.service.Scores.GetAll()
-	if err != nil {
-		newErrorResponse(c,http.StatusInternalServerError,err.Error())
-		return
-	}
-
-	c.JSON(http.StatusOK,getAllScores{
-		Data: scores,
-	})
-}
-
-func (h *Handler) getScoresById(c *gin.Context){
+func (h *Handler) getUserById(c *gin.Context){
 
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
@@ -72,16 +53,16 @@ func (h *Handler) getScoresById(c *gin.Context){
 		return
 	}
 
-	account, err := h.service.Scores.GetById(id)
+	user, err := h.service.User.GetById(id)
 	if err != nil {
 		newErrorResponse(c,http.StatusInternalServerError,err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK,account)
+	c.JSON(http.StatusOK,user)
 }
 
-func (h *Handler) updateScores(c *gin.Context){
+func (h *Handler) updateUser(c *gin.Context){
 
 
 	id, err := strconv.Atoi(c.Param("id"))
@@ -90,16 +71,35 @@ func (h *Handler) updateScores(c *gin.Context){
 		return
 	}
 
-	var input models.UpdateScores
+	var input models.UpdateUser
 	if err := c.BindJSON(&input); err != nil{
 		newErrorResponse(c,http.StatusBadRequest, err.Error())
 		return
 	}
 
-	h.service.Scores.Update(id,input)
+	h.service.User.Update(id,input)
 
 	c.JSON(http.StatusOK, statusResponse{
 		Status: "Updated",
 	})
 }
 
+func (h *Handler) deleteUser(c *gin.Context) {
+
+	id, err := strconv.Atoi(c.Param("id"))
+
+	if err != nil {
+		newErrorResponse(c,http.StatusBadRequest, "invalid id param")
+		return
+	}
+
+	err = h.service.User.Delete( id)
+	if err != nil {
+		newErrorResponse(c,http.StatusInternalServerError,err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, statusResponse{
+		Status: "Deleted",
+	})
+}

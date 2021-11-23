@@ -28,15 +28,15 @@ func (r *StatusDB) Create(status models.Status) (int, error) {
 }
 
 func (r *StatusDB) GetAll() ([]models.Status, error) {
-	var accounts []models.Status
-	err := r.db.Table("status").Find(&accounts).Error
-	return accounts,  err
+	var status []models.Status
+	err := r.db.Table("status").Find(&status).Error
+	return status,  err
 }
 
 func (r *StatusDB) GetById(statusId int) (models.Status, error) {
-	var account models.Status
-	err := r.db.Table("status").Where("id_status = ?",statusId).Scan(&account).Error
-	return account, err
+	var status models.Status
+	err := r.db.Table("status").Where("id_status = ?",statusId).Scan(&status).Error
+	return status, err
 }
 
 func (r *StatusDB) Delete(statusId int) error {

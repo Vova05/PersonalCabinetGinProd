@@ -69,6 +69,69 @@ type Scores interface {
 	Update(scoreId int ,input models.UpdateScores)( error)
 	GetAllAccount(accountId int)( []models.Scores, error)
 }
+
+type StatusScore interface {
+	Create(statusScore models.StatusScore)(int, error)
+	GetAll()([]models.StatusScore, error)
+	GetById(statusScoreId int)(models.StatusScore, error)
+	Update(statusScoreId int ,input models.UpdateStatusScore)( error)
+	Delete(statusScoreId int)( error)
+}
+
+type ScoresMoney interface {
+	Create(scoreMoney models.ScoresMoney)(int, error)
+	GetAll()([]models.ScoresMoney, error)
+	GetById(scoreMoneyId int)(models.ScoresMoney, error)
+	Update(scoreMoneyId int ,input models.UpdateScoresMoney)( error)
+	GetAllScore(scoreId int)( []models.ScoresMoney, error)
+}
+
+type Money interface {
+	Create(money models.Money)(int, error)
+	GetAll()([]models.Money, error)
+	GetById(moneyId int)(models.Money, error)
+	Update(moneyId int ,input models.UpdateMoney)( error)
+}
+
+type Currency interface {
+	Create(currency models.Currency)(int, error)
+	GetAll()([]models.Currency, error)
+	GetById(currencyId int)(models.Currency, error)
+	Update(currencyId int ,input models.UpdateCurrency)( error)
+}
+
+type Card interface {
+	Create(card models.Card)(int, error)
+	GetAll()([]models.Card, error)
+	GetById(cardId int)(models.Card, error)
+	Update(cardId int ,input models.UpdateCard)( error)
+	GetAllAccount(accountId int)( []models.Card, error)
+}
+
+type StatusCard interface {
+	Create(status models.StatusCard)(int, error)
+	GetAll()([]models.StatusCard, error)
+	GetById(statusId int)(models.StatusCard, error)
+	Update(statusId int ,input models.UpdateStatusCard)( error)
+	Delete(statusId int)( error)
+}
+
+type Reminder interface {
+	Create(reminder models.Reminder)(int, error)
+	GetAll()([]models.Reminder, error)
+	GetById(reminderId int)(models.Reminder, error)
+	Update(reminderId int ,input models.UpdateReminder)( error)
+	Delete(reminderId int)( error)
+}
+
+type User interface {
+	Create(user models.User)(int, error)
+	GetAll()([]models.User, error)
+	GetById(userId int)(models.User, error)
+	Update(userId int ,input models.UpdateUser)( error)
+	Delete(userId int)( error)
+}
+
 type Service struct {
 	Authorisation
 	Application
@@ -78,6 +141,14 @@ type Service struct {
 	BankAccounts
 	Status
 	Scores
+	StatusScore
+	ScoresMoney
+	Money
+	Currency
+	Card
+	StatusCard
+	Reminder
+	User
 }
 
 func NewService(repos *repository.Repository) *Service{
@@ -90,5 +161,13 @@ func NewService(repos *repository.Repository) *Service{
 		BankAccounts: NewBankAccountsService (repos.BankAccounts),
 		Status: NewStatusService (repos.Status),
 		Scores: NewScoresService(repos.Scores),
+		StatusScore: NewStatusScoreService (repos.StatusScore),
+		ScoresMoney: NewScoresMoneyService (repos.ScoresMoney),
+		Money: NewMoneyService (repos.Money),
+		Currency: NewCurrencyService (repos.Currency),
+		Card: NewCardService (repos.Card),
+		StatusCard: NewStatusCardService(repos.StatusCard),
+		Reminder: NewReminderService(repos.Reminder),
+		User: NewUserService (repos.User),
 	}
 }

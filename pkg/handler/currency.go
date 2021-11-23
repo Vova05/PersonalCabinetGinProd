@@ -7,15 +7,15 @@ import (
 	"strconv"
 )
 
-func (h *Handler) createScores(c *gin.Context){
+func (h *Handler) createCurrency(c *gin.Context){
 
-	var input models.Scores
+	var input models.Currency
 	if err := c.BindJSON(&input); err != nil{
 		newErrorResponse(c,http.StatusBadRequest,err.Error())
 		return
 	}
 
-	id,err := h.service.Scores.Create(input)
+	id,err := h.service.Currency.Create(input)
 
 	if err != nil {
 		newErrorResponse(c,http.StatusInternalServerError,err.Error())
@@ -27,44 +27,25 @@ func (h *Handler) createScores(c *gin.Context){
 	})
 }
 
-type getAllScores struct {
-	Data []models.Scores `json:"data"`
+type getAllCurrency struct {
+	Data []models.Currency `json:"data"`
 }
 
-func (h *Handler)  getAllScoresUser(c *gin.Context){
 
-	userId, err := getUserId(c)
+func (h *Handler)  getAllCurrency(c *gin.Context){
 
-	if err != nil{
-		return
-	}
-
-	account, err := h.service.BankAccounts.GetAllUser(userId)//список
-	scores, err := h.service.Scores.GetAllAccount(account[0].IdBankAccount)//список
+	scores, err := h.service.Currency.GetAll()
 	if err != nil {
 		newErrorResponse(c,http.StatusInternalServerError,err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK,getAllScores{
+	c.JSON(http.StatusOK,getAllCurrency{
 		Data: scores,
 	})
 }
 
-func (h *Handler)  getAllScores(c *gin.Context){
-
-	scores, err := h.service.Scores.GetAll()
-	if err != nil {
-		newErrorResponse(c,http.StatusInternalServerError,err.Error())
-		return
-	}
-
-	c.JSON(http.StatusOK,getAllScores{
-		Data: scores,
-	})
-}
-
-func (h *Handler) getScoresById(c *gin.Context){
+func (h *Handler) getCurrencyById(c *gin.Context){
 
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
@@ -72,7 +53,7 @@ func (h *Handler) getScoresById(c *gin.Context){
 		return
 	}
 
-	account, err := h.service.Scores.GetById(id)
+	account, err := h.service.Currency.GetById(id)
 	if err != nil {
 		newErrorResponse(c,http.StatusInternalServerError,err.Error())
 		return
@@ -81,7 +62,7 @@ func (h *Handler) getScoresById(c *gin.Context){
 	c.JSON(http.StatusOK,account)
 }
 
-func (h *Handler) updateScores(c *gin.Context){
+func (h *Handler) updateCurrency(c *gin.Context){
 
 
 	id, err := strconv.Atoi(c.Param("id"))
@@ -90,13 +71,13 @@ func (h *Handler) updateScores(c *gin.Context){
 		return
 	}
 
-	var input models.UpdateScores
+	var input models.UpdateCurrency
 	if err := c.BindJSON(&input); err != nil{
 		newErrorResponse(c,http.StatusBadRequest, err.Error())
 		return
 	}
 
-	h.service.Scores.Update(id,input)
+	h.service.Currency.Update(id,input)
 
 	c.JSON(http.StatusOK, statusResponse{
 		Status: "Updated",

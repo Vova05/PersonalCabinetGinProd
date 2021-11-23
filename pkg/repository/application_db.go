@@ -68,6 +68,7 @@ func (r *ApplicationDB) Update(userId,id int ,input models.UpdateApplication)( e
 	err := r.db.Model(app).Where("creator_id = ? AND id_application = ?", userId, id).Updates(models.UpdateApplication{
 		Title: input.Title,
 		Message: input.Message,
+		TitleId: input.TitleId,
 	}).Error
 	return err
 }

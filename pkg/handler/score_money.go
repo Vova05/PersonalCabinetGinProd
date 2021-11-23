@@ -7,15 +7,15 @@ import (
 	"strconv"
 )
 
-func (h *Handler) createScores(c *gin.Context){
+func (h *Handler) createScoresMoney(c *gin.Context){
 
-	var input models.Scores
+	var input models.ScoresMoney
 	if err := c.BindJSON(&input); err != nil{
 		newErrorResponse(c,http.StatusBadRequest,err.Error())
 		return
 	}
 
-	id,err := h.service.Scores.Create(input)
+	id,err := h.service.ScoresMoney.Create(input)
 
 	if err != nil {
 		newErrorResponse(c,http.StatusInternalServerError,err.Error())
@@ -27,11 +27,11 @@ func (h *Handler) createScores(c *gin.Context){
 	})
 }
 
-type getAllScores struct {
-	Data []models.Scores `json:"data"`
+type getAllScoresMoney struct {
+	Data []models.ScoresMoney `json:"data"`
 }
 
-func (h *Handler)  getAllScoresUser(c *gin.Context){
+func (h *Handler)  getAllScore(c *gin.Context){
 
 	userId, err := getUserId(c)
 
@@ -39,32 +39,35 @@ func (h *Handler)  getAllScoresUser(c *gin.Context){
 		return
 	}
 
-	account, err := h.service.BankAccounts.GetAllUser(userId)//список
-	scores, err := h.service.Scores.GetAllAccount(account[0].IdBankAccount)//список
+
+	account, err := h.service.BankAccounts.GetAllUser(userId)
+	score, err := h.service.Scores.GetAllAccount(account[0].IdBankAccount)//поменять на срез
+	moneyScore, err := h.service.ScoresMoney.GetAllScore(score[0].IdScore)//тоже
+
 	if err != nil {
 		newErrorResponse(c,http.StatusInternalServerError,err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK,getAllScores{
-		Data: scores,
+	c.JSON(http.StatusOK,getAllScoresMoney{
+		Data: moneyScore,
 	})
 }
 
-func (h *Handler)  getAllScores(c *gin.Context){
+func (h *Handler)  getAllScoresMoney(c *gin.Context){
 
-	scores, err := h.service.Scores.GetAll()
+	scores, err := h.service.ScoresMoney.GetAll()
 	if err != nil {
 		newErrorResponse(c,http.StatusInternalServerError,err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK,getAllScores{
+	c.JSON(http.StatusOK,getAllScoresMoney{
 		Data: scores,
 	})
 }
 
-func (h *Handler) getScoresById(c *gin.Context){
+func (h *Handler) getScoresMoneyById(c *gin.Context){
 
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
@@ -72,7 +75,7 @@ func (h *Handler) getScoresById(c *gin.Context){
 		return
 	}
 
-	account, err := h.service.Scores.GetById(id)
+	account, err := h.service.ScoresMoney.GetById(id)
 	if err != nil {
 		newErrorResponse(c,http.StatusInternalServerError,err.Error())
 		return
@@ -81,7 +84,7 @@ func (h *Handler) getScoresById(c *gin.Context){
 	c.JSON(http.StatusOK,account)
 }
 
-func (h *Handler) updateScores(c *gin.Context){
+func (h *Handler) updateScoresMoney(c *gin.Context){
 
 
 	id, err := strconv.Atoi(c.Param("id"))
@@ -90,13 +93,13 @@ func (h *Handler) updateScores(c *gin.Context){
 		return
 	}
 
-	var input models.UpdateScores
+	var input models.UpdateScoresMoney
 	if err := c.BindJSON(&input); err != nil{
 		newErrorResponse(c,http.StatusBadRequest, err.Error())
 		return
 	}
 
-	h.service.Scores.Update(id,input)
+	h.service.ScoresMoney.Update(id,input)
 
 	c.JSON(http.StatusOK, statusResponse{
 		Status: "Updated",
