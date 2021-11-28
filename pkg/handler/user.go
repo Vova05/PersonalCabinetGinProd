@@ -7,6 +7,13 @@ import (
 	"strconv"
 )
 
+func (h *Handler) getProfile (c *gin.Context){
+	data := gin.H{
+		"title": "Profile",
+	}
+	c.HTML(http.StatusOK,"profile.html",data)
+}
+
 func (h *Handler) createUser(c *gin.Context){
 
 	var input models.User

@@ -3,6 +3,7 @@ package repository
 import (
 	"PersonalCabinetGin/models"
 	"gorm.io/gorm"
+	"time"
 )
 
 type ApplicationDB struct {
@@ -17,7 +18,8 @@ func (r *ApplicationDB) Create(userId int, application models.Application)(int, 
 	var id int
 	//query := fmt.Sprintf("INSERT INTO %s (name, username, password_hash) VALUES ($1, $2, $3) RETURNING id", Table)
 	application.CreatorId=userId
-	row := r.db.Select("Title","Message","CreatorId").Create(&application)
+	application.CreatedAt = time.Now().UTC()
+	row := r.db.Table("applications").Create(&application)
 	if err := row.Scan(&application).Error; err != nil {
 		return 0,err
 	}
@@ -71,4 +73,17 @@ func (r *ApplicationDB) Update(userId,id int ,input models.UpdateApplication)( e
 		TitleId: input.TitleId,
 	}).Error
 	return err
+}
+
+func (r *ApplicationDB) GetAllUser(userId int)([]models.Application,error){
+	var applications []models.Application
+	err := r.db.Table("applications").Where("creator_id = ? OR recipient_user_id = ?",userId,userId).Find(&applications).Error
+	return applications, err
+}
+
+
+func (r *ApplicationDB) GetAllUserResponse(userId int)([]models.Application,error){
+	var applications []models.Application
+	err := r.db.Table("applications").Where("recipient_user_id = ?",userId).Find(&applications).Error
+	return applications, err
 }

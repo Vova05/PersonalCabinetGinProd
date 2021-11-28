@@ -13,6 +13,10 @@ func NewApplicationService(repo repository.Application) *ApplicationService{
 	return &ApplicationService{repo: repo}
 }
 
+func (s *ApplicationService)  GetAllUserResponse(userId int)([]models.Application,error){
+	return s.repo.GetAllUserResponse(userId)
+}
+
 func (s *ApplicationService)Create(userId int, application models.Application)(int, error){
 	return s.repo.Create(userId, application)
 }
@@ -31,4 +35,7 @@ func (s *ApplicationService) Delete(userId, applicationId int)( error){
 
 func (s *ApplicationService) Update(userId,id int ,input models.UpdateApplication)( error){
 	return s.repo.Update(userId,id, input)
+}
+func (s *ApplicationService) GetAllUser(userId int)([]models.Application,error){
+	return s.repo.GetAllUser(userId)
 }

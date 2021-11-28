@@ -7,7 +7,9 @@ import (
 
 type Authorisation interface {
 	CreateUser(user models.User)(int,error)
-	GetUser(username,password string)(models.User,error)
+	GetUser(username,password string)(int,models.User,error)
+	SaveToken(userId int,token string)(error)
+	TakeToken(userId int)(string,error)
 }
 
 type Application interface {
@@ -16,6 +18,8 @@ type Application interface {
 	GetById(userId, applicationId int)(models.Application, error)
 	Delete(userId, applicationId int)( error)
 	Update(userId,id int ,input models.UpdateApplication)( error)
+	GetAllUser(userId int)([]models.Application,error)
+	GetAllUserResponse(userId int)([]models.Application,error)
 }
 
 type Role interface {
@@ -129,6 +133,19 @@ type User interface {
 	GetById(userId int)(models.User, error)
 	Update(userId int ,input models.UpdateUser)( error)
 	Delete(userId int)( error)
+	GetByToken(token string)(int,error)
+}
+
+type ApplicationTitle interface {
+	Create(applicationTitle models.ApplicationTitle)(int, error)
+	GetAll()([]models.ApplicationTitle, error)
+	GetById(applicationTitleId int)(models.ApplicationTitle, error)
+	Delete(applicationTitleId int)( error)
+	Update(applicationTitleId int ,input models.UpdateApplicationTitle)( error)
+}
+
+type Profile interface {
+	GetProfile(token string)(models.User, []models.Application)
 }
 
 type Repository struct {
@@ -148,6 +165,8 @@ type Repository struct {
 	StatusCard
 	Reminder
 	User
+	ApplicationTitle
+	Profile
 }
 
 
@@ -170,5 +189,7 @@ func NewRepository(db *gorm.DB) *Repository{
 		StatusCard: NewStatusCardDB(db),
 		Reminder: NewReminderDB(db),
 		User: NewUserDB(db),
+		ApplicationTitle: NewApplicationTitleDB(db),
+		Profile: NewProfileDB(db),
 	}
 }

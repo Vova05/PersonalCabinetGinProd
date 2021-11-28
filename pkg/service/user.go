@@ -38,5 +38,9 @@ func (s *UserService) Update (userId int, input models.UpdateUser) error {
 	return s.repo.Update(userId,input)
 }
 
+func (s *UserService) GetByToken(token string)(int,error){
+	return s.repo.GetByToken(token )
+}
+
 
 

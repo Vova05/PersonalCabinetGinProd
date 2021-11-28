@@ -3,6 +3,7 @@ package handler
 import (
 	"PersonalCabinetGin/pkg/service"
 	"github.com/gin-gonic/gin"
+	"net/http"
 )
 
 type Handler struct {
@@ -14,31 +15,77 @@ func NewHandler(services *service.Service) *Handler{
 }
 
 func (h *Handler) InitRoutes() *gin.Engine{
-	router := gin.New()
+	router := gin.Default()
 
-	router.Static("/css","C:\\Users\\VovaGlh\\GolandProjects\\PersonalCabinetGin1\\pkg\\handler\\templates\\css")
-	router.Static("/fonts","C:\\Users\\VovaGlh\\GolandProjects\\PersonalCabinetGin1\\pkg\\handler\\templates/css/fonts")
-	router.Static("/images","C:\\Users\\VovaGlh\\GolandProjects\\PersonalCabinetGin1\\pkg\\handler\\templates/images")
-	router.Static("/js","C:\\Users\\VovaGlh\\GolandProjects\\PersonalCabinetGin1\\pkg\\handler\\templates/js")
+	router.StaticFS("/css",http.Dir("C:\\Users\\VovaGlh\\GolandProjects\\PersonalCabinetGin1\\pkg\\handler\\templates\\css"))
+	router.StaticFS("/fonts",http.Dir("C:\\Users\\VovaGlh\\GolandProjects\\PersonalCabinetGin1\\pkg\\handler\\templates\\css\\fonts"))
+	router.StaticFS("/img",http.Dir("C:\\Users\\VovaGlh\\GolandProjects\\PersonalCabinetGin1\\pkg\\handler\\templates\\img"))
+	router.StaticFS("/js",http.Dir("C:\\Users\\VovaGlh\\GolandProjects\\PersonalCabinetGin1\\pkg\\handler\\templates\\js"))
+	router.StaticFS("/less",http.Dir("C:\\Users\\VovaGlh\\GolandProjects\\PersonalCabinetGin1\\pkg\\handler\\templates\\less"))
 
 	router.LoadHTMLGlob("C:\\Users\\VovaGlh\\GolandProjects\\PersonalCabinetGin1\\pkg\\handler\\templates/*.html")
 
-	auth := router.Group("/auth")
+	//auth := router.Group("/auth")
+	//{
+	//	auth.Static("/css","C:\\Users\\VovaGlh\\GolandProjects\\PersonalCabinetGin1\\pkg\\handler\\templates\\css")
+	//	auth.Static("/fonts","C:\\Users\\VovaGlh\\GolandProjects\\PersonalCabinetGin1\\pkg\\handler\\templates/assets/css/fonts")
+	//	auth.Static("/images","C:\\Users\\VovaGlh\\GolandProjects\\PersonalCabinetGin1\\pkg\\handler\\templates/assets/images")
+	//	auth.Static("/js","C:\\Users\\VovaGlh\\GolandProjects\\PersonalCabinetGin1\\pkg\\handler\\templates/js")
+	//
+	//	auth.POST("/sign-up", h.signUp)
+	//
+	//	auth.POST("/sign-in", h.signIn)
+	//	auth.GET("/sign-in",h.signInGet)
+	//
+	//}
+
+	router.POST("/auths",  h.signIn)
+	router.GET("/auths",h.signInGet)
+	router.GET("/test", h.getProfile)
+	test := router.Group("/testg/id/ррр")
 	{
-		auth.Static("/css","C:\\Users\\VovaGlh\\GolandProjects\\PersonalCabinetGin1\\pkg\\handler\\templates\\css")
-		auth.Static("/fonts","C:\\Users\\VovaGlh\\GolandProjects\\PersonalCabinetGin1\\pkg\\handler\\templates/assets/css/fonts")
-		auth.Static("/images","C:\\Users\\VovaGlh\\GolandProjects\\PersonalCabinetGin1\\pkg\\handler\\templates/assets/images")
-		auth.Static("/js","C:\\Users\\VovaGlh\\GolandProjects\\PersonalCabinetGin1\\pkg\\handler\\templates/js")
+		test.StaticFS("/css",http.Dir("C:\\Users\\VovaGlh\\GolandProjects\\PersonalCabinetGin1\\pkg\\handler\\templates\\css"))
+		test.StaticFS("/fonts",http.Dir("C:\\Users\\VovaGlh\\GolandProjects\\PersonalCabinetGin1\\pkg\\handler\\templates\\css\\fonts"))
+		test.StaticFS("/img",http.Dir("C:\\Users\\VovaGlh\\GolandProjects\\PersonalCabinetGin1\\pkg\\handler\\templates\\img"))
+		test.StaticFS("/js",http.Dir("C:\\Users\\VovaGlh\\GolandProjects\\PersonalCabinetGin1\\pkg\\handler\\templates\\js"))
+		test.StaticFS("/less",http.Dir("C:\\Users\\VovaGlh\\GolandProjects\\PersonalCabinetGin1\\pkg\\handler\\templates\\less"))
 
-		auth.POST("/sign-up", h.signUp)
 
-		auth.POST("/sign-in", h.signIn)
-		auth.GET("/sign-in",h.signInGet)
+		test.GET("/",h.getProfileUser)
 	}
-
-	api :=router.Group("/api",h.userIdentity)
+	bank_admin := router.Group("/bank_admin", h.userIdentity)
 	{
-		application := api.Group("/applications")
+		bank_admin.StaticFS("/css",http.Dir("C:\\Users\\VovaGlh\\GolandProjects\\PersonalCabinetGin1\\pkg\\handler\\templates\\css"))
+		bank_admin.StaticFS("/fonts",http.Dir("C:\\Users\\VovaGlh\\GolandProjects\\PersonalCabinetGin1\\pkg\\handler\\templates\\css\\fonts"))
+		bank_admin.StaticFS("/img",http.Dir("C:\\Users\\VovaGlh\\GolandProjects\\PersonalCabinetGin1\\pkg\\handler\\templates\\img"))
+		bank_admin.StaticFS("/js",http.Dir("C:\\Users\\VovaGlh\\GolandProjects\\PersonalCabinetGin1\\pkg\\handler\\templates\\js"))
+		bank_admin.StaticFS("/less",http.Dir("C:\\Users\\VovaGlh\\GolandProjects\\PersonalCabinetGin1\\pkg\\handler\\templates\\less"))
+
+		bank_admin.GET("/profile",h.getProfileUser)
+		bank_admin.POST("/profile", h.createApplication)
+
+		bank_admin.GET("/bank_account", h.getBankAccount)
+
+		bank_admin.GET("/bank_scores",h.getScores)
+
+		create_admin := bank_admin.Group("/create")
+		{
+			create_admin.StaticFS("/css",http.Dir("C:\\Users\\VovaGlh\\GolandProjects\\PersonalCabinetGin1\\pkg\\handler\\templates\\css"))
+			create_admin.StaticFS("/fonts",http.Dir("C:\\Users\\VovaGlh\\GolandProjects\\PersonalCabinetGin1\\pkg\\handler\\templates\\css\\fonts"))
+			create_admin.StaticFS("/img",http.Dir("C:\\Users\\VovaGlh\\GolandProjects\\PersonalCabinetGin1\\pkg\\handler\\templates\\img"))
+			create_admin.StaticFS("/js",http.Dir("C:\\Users\\VovaGlh\\GolandProjects\\PersonalCabinetGin1\\pkg\\handler\\templates\\js"))
+			create_admin.StaticFS("/less",http.Dir("C:\\Users\\VovaGlh\\GolandProjects\\PersonalCabinetGin1\\pkg\\handler\\templates\\less"))
+
+			create_admin.GET("/", h.addUserGet)
+			create_admin.POST("/post",h.addUser)
+		}
+		message := bank_admin.Group("/messages")
+		{
+			message.GET("/", )
+			message.POST("/",)
+		}
+
+		application := bank_admin.Group("/applications")
 		{
 			application.GET("/", h.getAllApplication)
 			application.GET("/:id",h.getApplicationById)
@@ -46,7 +93,7 @@ func (h *Handler) InitRoutes() *gin.Engine{
 			application.PUT("/:id", h.updateApplication)
 			application.DELETE("/:id",h.deleteApplication)
 		}
-		role := api.Group("/role")
+		role := bank_admin.Group("/role")
 		{
 			role.GET("/", h.getAllRoles)
 			role.GET("/:id",h.getRoleById)
@@ -55,7 +102,7 @@ func (h *Handler) InitRoutes() *gin.Engine{
 			role.PUT("/:id", h.updateRole)
 			role.DELETE("/:id",h.deleteRole)
 		}
-		roles_rights := api.Group("/role_rights")
+		roles_rights := bank_admin.Group("/role_rights")
 		{
 			roles_rights.GET("/", h.getAllRoleRights)
 			roles_rights.GET("/:id",h.getRoleRightsById)
@@ -64,7 +111,7 @@ func (h *Handler) InitRoutes() *gin.Engine{
 			roles_rights.PUT("/:id", h.updateRoleRights)
 			roles_rights.DELETE("/:id",h.deleteRoleRights)
 		}
-		rights := api.Group("/rights")
+		rights := bank_admin.Group("/rights")
 		{
 			rights.GET("/", h.getAllRights)
 			rights.GET("/:id",h.getRightsById)
@@ -72,7 +119,7 @@ func (h *Handler) InitRoutes() *gin.Engine{
 			rights.PUT("/:id", h.updateRights)
 			rights.DELETE("/:id",h.deleteRights)//нужно обратить внимание на сущности которые зависят от этой
 		}
-		bank_accounts := api.Group("/bank_accounts")
+		bank_accounts := bank_admin.Group("/bank_accounts")
 		{
 			bank_accounts.GET("/", h.getAllBankAccounts)
 			bank_accounts.GET("/user", h.getAllBankAccountsUser)
@@ -81,7 +128,7 @@ func (h *Handler) InitRoutes() *gin.Engine{
 			bank_accounts.PUT("/:id", h.updateBankAccounts)
 		}
 
-		status := api.Group("/status")
+		status := bank_admin.Group("/status")
 		{
 			status.GET("/", h.getAllStatus)
 			status.GET("/:id",h.getStatusById)
@@ -89,7 +136,7 @@ func (h *Handler) InitRoutes() *gin.Engine{
 			status.PUT("/:id", h.updateStatus)
 			status.DELETE("/:id", h.deleteStatus)
 		}
-		scores := api.Group("/scores")
+		scores := bank_admin.Group("/scores")
 		{
 			scores.GET("/", h.getAllScores)
 			scores.GET("/:id",h.getScoresById)
@@ -98,7 +145,7 @@ func (h *Handler) InitRoutes() *gin.Engine{
 			scores.PUT("/:id", h.updateScores)
 		}
 
-		status_score := api.Group("/status_score")
+		status_score := bank_admin.Group("/status_score")
 		{
 			status_score.GET("/", h.getAllStatusScore)
 			status_score.GET("/:id",h.getStatusScoreById)
@@ -107,7 +154,7 @@ func (h *Handler) InitRoutes() *gin.Engine{
 			status_score.DELETE("/:id", h.deleteStatusScore)
 		}
 
-		score_money := api.Group("/score_money")
+		score_money := bank_admin.Group("/score_money")
 		{
 			score_money.GET("/", h.getAllScoresMoney)
 			score_money.GET("/:id",h.getScoresMoneyById)
@@ -116,7 +163,7 @@ func (h *Handler) InitRoutes() *gin.Engine{
 			score_money.PUT("/:id", h.updateScoresMoney)
 		}
 
-		money := api.Group("/money")
+		money := bank_admin.Group("/money")
 		{
 			money.GET("/", h.getAllMoney)
 			money.GET("/:id",h.getMoneyById)
@@ -124,7 +171,7 @@ func (h *Handler) InitRoutes() *gin.Engine{
 			money.PUT("/:id", h.updateMoney)
 		}
 
-		currency := api.Group("/currency")
+		currency := bank_admin.Group("/currency")
 		{
 			currency.GET("/", h.getAllCurrency)
 			currency.GET("/:id",h.getCurrencyById)
@@ -132,7 +179,7 @@ func (h *Handler) InitRoutes() *gin.Engine{
 			currency.PUT("/:id", h.updateCurrency)
 		}
 
-		card := api.Group("/cards")
+		card := bank_admin.Group("/cards")
 		{
 			card.GET("/", h.getAllCard)
 			card.GET("/:id",h.getCardById)
@@ -141,7 +188,7 @@ func (h *Handler) InitRoutes() *gin.Engine{
 			card.PUT("/:id", h.updateCard)
 		}
 
-		status_card := api.Group("/status_card")
+		status_card := bank_admin.Group("/status_card")
 		{
 			status_card.GET("/", h.getAllStatusCard)
 			status_card.GET("/:id",h.getStatusCardById)
@@ -150,7 +197,7 @@ func (h *Handler) InitRoutes() *gin.Engine{
 			status_card.DELETE("/:id",h.deleteStatusCard)
 		}
 
-		reminder := api.Group("/reminder")
+		reminder := bank_admin.Group("/reminder")
 		{
 			reminder.GET("/", h.getAllReminder)
 			reminder.GET("/:id",h.getReminderById)
@@ -159,7 +206,7 @@ func (h *Handler) InitRoutes() *gin.Engine{
 			reminder.DELETE("/:id",h.deleteReminder)
 		}
 
-		users := api.Group("/users")
+		users := bank_admin.Group("/users")
 		{
 			users.GET("/", h.getAllUser)
 			users.GET("/:id",h.getUserById)

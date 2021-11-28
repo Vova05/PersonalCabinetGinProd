@@ -62,4 +62,10 @@ func (r *UserDB) Update(userId int, input models.UpdateUser) error {
 	return err
 }
 
+func (r *UserDB) GetByToken(token string)(int,error){
+	var user models.User
+	err := r.db.Table("users").Where("token = ?",token).Scan(&user).Error
+	return user.IdUser, err
+}
+
 

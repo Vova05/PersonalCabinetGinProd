@@ -13,3 +13,8 @@ type UpdateMoney struct {
 	Quantity int `json:"quantity"`
 	UpdatedAt time.Time
 }
+
+type ScoresMoneyGet struct {
+	Quantity int `json:"quantity"`
+	CurrencyMoney string `json:"currency_money"`
+}

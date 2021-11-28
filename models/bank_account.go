@@ -12,3 +12,9 @@ type UpdateBankAccounts struct {
 	ClientId int `json:"client_id"`
 	StatusId int `json:"status_id"`
 }
+
+type BankAccountsGet struct {
+	NumberAccount int `json:"number_account"`
+	StatusName string `json:"status_name"`
+	ScoresAccount []ScoresGet `json:"scores_account"`
+}

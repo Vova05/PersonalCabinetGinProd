@@ -8,28 +8,40 @@ import (
 )
 
 func (h *Handler) createApplication(c *gin.Context){
-	userId, err := getUserId(c)
+
+
+	userId, err := h.tokenParseToUserId("Token",c)
 
 	if err != nil{
 		return
 	}
 	var input models.Application
-	if err := c.BindJSON(&input); err != nil{
-		newErrorResponse(c,http.StatusBadRequest,err.Error())
+	//if err := c.BindJSON(&input); err != nil{
+	//	newErrorResponse(c,http.StatusBadRequest,err.Error())
+	//	return
+	//}
+
+	Title, err1 := c.GetPostForm("TitleMessage")
+	Message, err2 :=c.GetPostForm("Message")
+	UserName, _ := c.GetPostForm("UserName")
+	idUser, _ := strconv.Atoi(UserName)
+	if err1 != true || err2 != true {
 		return
 	}
+	if Message != "" && Title != ""{
 
-	id, err := h.service.Application.Create(userId,input)
-
-	if err != nil {
-		newErrorResponse(c,http.StatusInternalServerError,err.Error())
-		return
+		input.Title = Title
+		input.Message = Message
+		//input.RecipientUserId = 2
+		input.TitleId = 1
+		input.RecipientUserId = idUser
+		h.service.Application.Create(userId, input)
+		//if err != nil {
+		//	newErrorResponse(c,http.StatusInternalServerError,err.Error())
+		//	return
+		//}
 	}
-
-
-	c.JSON(http.StatusOK,map[string]interface{}{
-		"id": id,
-	})
+	c.Redirect(http.StatusMovedPermanently, "http://localhost:9090/bank_admin/profile")
 }
 
 type getAllApplications struct {

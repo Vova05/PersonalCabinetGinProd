@@ -8,8 +8,11 @@ import (
 type Authorisation interface {
 
 	CreateUser(user models.User)(int, error)
-	GenerateToken(username, password string)(string, error)
+	GenerateToken(username, password string)(int,string, error)
 	ParseToken(token string)(int, error)
+	SaveToken(userId int,token string)(error)
+	TakeToken(userId int)(string,error)
+
 }
 
 type Application interface {
@@ -18,6 +21,8 @@ type Application interface {
 	GetById(userId, applicationId int)(models.Application, error)
 	Delete(userId, applicationId int)( error)
 	Update(userId,id int ,input models.UpdateApplication)( error)
+	GetAllUser(token int)([]models.Application,error)
+	GetAllUserResponse(token int)([]models.Application,error)
 }
 
 type Role interface {
@@ -130,8 +135,19 @@ type User interface {
 	GetById(userId int)(models.User, error)
 	Update(userId int ,input models.UpdateUser)( error)
 	Delete(userId int)( error)
+	GetByToken(token string)(int,error)
 }
 
+type ApplicationTitle interface {
+	Create(applicationTitle models.ApplicationTitle)(int, error)
+	GetAll()([]models.ApplicationTitle, error)
+	GetById(applicationTitleId int)(models.ApplicationTitle, error)
+	Delete(applicationTitleId int)( error)
+	Update(applicationTitleId int ,input models.UpdateApplicationTitle)( error)
+}
+type Profile interface {
+	GetProfile(token string)(models.User, []models.Application)
+}
 type Service struct {
 	Authorisation
 	Application
@@ -149,6 +165,8 @@ type Service struct {
 	StatusCard
 	Reminder
 	User
+	ApplicationTitle
+	Profile
 }
 
 func NewService(repos *repository.Repository) *Service{
@@ -169,5 +187,7 @@ func NewService(repos *repository.Repository) *Service{
 		StatusCard: NewStatusCardService(repos.StatusCard),
 		Reminder: NewReminderService(repos.Reminder),
 		User: NewUserService (repos.User),
+		ApplicationTitle: NewApplicationTitleService(repos.ApplicationTitle),
+		Profile: NewProfileService(repos.Profile),
 	}
 }

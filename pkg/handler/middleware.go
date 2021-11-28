@@ -3,6 +3,7 @@ package handler
 import (
 	"errors"
 	"github.com/gin-gonic/gin"
+	"log"
 	"net/http"
 	"strings"
 )
@@ -14,25 +15,66 @@ const (
 
 func (h *Handler) userIdentity(c *gin.Context){
 
-	header := c.GetHeader(authorizationHeader)
+
+	cook , errC:= c.Request.Cookie("Token")
+
+	var token string
+	if errC == nil {
+		token = cook.Value
+	}else{
+		newErrorResponse(c,http.StatusUnauthorized,"empty auth header")
+		return
+	}
+
+	header := token
 	if header == ""{
 		newErrorResponse(c,http.StatusUnauthorized,"empty auth header")
 		return
 	}
 
 	headerParts := strings.Split(header," ")
-	if len(headerParts) != 2{
-		newErrorResponse(c,http.StatusUnauthorized,"invalid auth header")
-		return
-	}
+	log.Println(headerParts)
+	log.Println(len(headerParts))
 
-	userId, err := h.service.Authorisation.ParseToken(headerParts[1])
+
+	userId, err := h.service.Authorisation.ParseToken(header)
 	if err != nil {
 		newErrorResponse(c,http.StatusUnauthorized,err.Error())
 		return
 	}
 
 	c.Set(userCtx, userId)
+}
+
+func (h *Handler)tokenParseToUserId ( nameCook string, c *gin.Context) (int,error){
+
+	cook , errC:= c.Request.Cookie(nameCook)
+	var token string
+	if errC == nil {
+		token = cook.Value
+	}else{
+		newErrorResponse(c,http.StatusUnauthorized,"empty auth header")
+		return 0, errC
+	}
+
+	header := token
+	if header == ""{
+		newErrorResponse(c,http.StatusUnauthorized,"empty auth header")
+		return 0, errC
+	}
+
+	headerParts := strings.Split(header," ")
+	log.Println(headerParts)
+	log.Println(len(headerParts))
+
+
+	userId, err := h.service.Authorisation.ParseToken(header)
+	if err != nil {
+		newErrorResponse(c,http.StatusUnauthorized,err.Error())
+		return 0,err
+	}
+
+	return userId,nil
 }
 
 func getUserId(c *gin.Context)(int ,error){

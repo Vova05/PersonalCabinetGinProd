@@ -23,3 +23,12 @@ type UpdateCard struct {
 	RememberPassId int `json:"remember_pass_id"`
 	UpdatedAt time.Time `json:"updated_at"`
 }
+
+type CardGet struct {
+	NumberCard int `json:"number_card"`
+	StatusCardName string `json:"status_card_name"`
+	CurrencyName string `json:"currency_name"`
+	AmountMoney int `json:"amount_money"`
+	RememberPass string `json:"remember_pass"`
+	CreatedAt time.Time `json:"created_at"`
+}
